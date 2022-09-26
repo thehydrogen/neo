@@ -1,5 +1,5 @@
 # neo
-Neo is a barebones, basic movement emulator Minecraft's Java Edition physics (for version 1.8)
+Neo is a barebones, basic movement emulator for Minecraft's Java Edition physics (for version 1.8)
 
 ## Disclaimer
 Neo comes with absolutely no warranty or support, use at your own risk.
