@@ -1,9 +1,15 @@
 package me.hydro.emulator.handler.impl;
 
+import me.hydro.emulator.collision.Block;
+import me.hydro.emulator.collision.CollisionBlockState;
+import me.hydro.emulator.collision.CollisionLandable;
+import me.hydro.emulator.collision.VerticalCollisionBlock;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
+import me.hydro.emulator.util.mcp.BlockPos;
+import me.hydro.emulator.util.mcp.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,6 +209,67 @@ public class MoveEntityHandler implements MovementHandler {
 
         iteration.setPredicted(predicted);
         iteration.setOffset(offset);
+
+        final boolean collidedVertically = d4 != y;
+        final boolean collidedGround = collidedVertically && d4 < 0.0D;
+
+        final int collisionX = MathHelper.floor_double(iteration.getPredicted().getX());
+        final int collisionY = MathHelper.floor_double(iteration.getPredicted().getY() - 0.20000000298023224D);
+        final int collisionZ = MathHelper.floor_double(iteration.getPredicted().getZ());
+
+        BlockPos blockPos = new BlockPos(collisionX, collisionY, collisionZ);
+        Block block = iteration.getDataSupplier().getBlockAt(blockPos);
+
+        if (block != null) {
+            /* fences need to be implemented here. good luck have fun :) */
+
+            final Block finalBlock = iteration.getDataSupplier().getBlockAt(
+                    blockPos.getX(),
+                    blockPos.getY(),
+                    blockPos.getZ()
+            );
+
+            if (d4 != y && finalBlock instanceof CollisionLandable) {
+                ((CollisionLandable)finalBlock).onLand(iteration);
+            }
+
+            if (collidedGround && !iteration.getInput().isSneaking() && finalBlock instanceof VerticalCollisionBlock) {
+                final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) finalBlock;
+
+                leFunnyBlock.transform(iteration);
+            }
+        } else {
+            if (d4 != y){
+                iteration.getMotion().setMotionX(0);
+            }
+        }
+
+        if (d3 != x) {
+            iteration.getMotion().setMotionX(0.0D);
+        }
+
+        if (d5 != z) {
+            iteration.getMotion().setMotionZ(0.0D);
+        }
+
+        // #doBlockCollisions
+        final BlockPos minPos = new BlockPos(entityBB.minX + 0.001D, entityBB.minY + 0.001D, entityBB.minZ + 0.001D);
+        final BlockPos maxPos = new BlockPos(entityBB.maxX - 0.001D, entityBB.maxY - 0.001D, entityBB.maxZ - 0.001D);
+
+        for (int i = minPos.getX(); i <= maxPos.getX(); ++i) {
+            for (int j = minPos.getY(); j <= maxPos.getY(); ++j) {
+                for (int k = minPos.getZ(); k <= maxPos.getZ(); ++k) {
+                    final Block collisionBlock = iteration.getDataSupplier().getBlockAt(i, j, k);
+
+                    final boolean isCollideState = collisionBlock instanceof CollisionBlockState;
+
+                    if (!isCollideState) continue;
+
+                    final CollisionBlockState blockState = (CollisionBlockState) collisionBlock;
+                    blockState.transform(iteration);
+                }
+            }
+        }
 
         if (d3 != x) iteration.getMotion().setMotionX(0.0D);
         if (d5 != z) iteration.getMotion().setMotionZ(0.0D);
