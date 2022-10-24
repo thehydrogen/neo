@@ -17,7 +17,6 @@ public class IterationInput implements Cloneable {
     private final Motion previousMotion;
 
     private final AxisAlignedBB lastReportedBoundingBox;
-    private final Vector velocity;
     private final Vector to;
 
     @Override
@@ -33,7 +32,6 @@ public class IterationInput implements Cloneable {
                 .strafing(strafing)
                 .yaw(yaw)
                 .lastReportedBoundingBox(lastReportedBoundingBox)
-                .velocity(velocity)
                 .to(to)
                 .previousMotion(previousMotion)
                 .build();
