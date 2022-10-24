@@ -36,14 +36,13 @@ final IterationInput iteration = IterationInput.builder()
     .usingItem(...) // you'll want to bruteforce this
     .hitSlowdown(...) // you'll want to bruteforce this
     .sneaking(...)
-    .motion(...) // see below
     .lastReportedBoundingBox(...) // from location, as a bounding box
     .build();
 ```
 
-This method returns an `IterationResult` object. Among offset and predicted location, it will also return the predicted motion.
+This method returns an `IterationResult` object.
 
-You can choose to use this predicted motion to be fed in next tick, or actual movement deltas (safer).
+Upon finding the correct result, run `Emulator#confirm` on the `IterationHolder` received from the `IterationResult.`
 
 ## License
 Neo is licensed under the MIT License. Have fun

@@ -1,8 +1,8 @@
 package me.hydro.emulator.collision;
 
-import me.hydro.emulator.object.iteration.IterationHolder;
+import me.hydro.emulator.Emulator;
 
 public interface CollisionBlockState {
 
-    void transform(final IterationHolder iteration);
+    void transform(final Emulator iteration);
 }

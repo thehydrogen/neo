@@ -10,8 +10,6 @@ public interface DataSupplier {
 
     List<AxisAlignedBB> getCollidingBoxes(final AxisAlignedBB bb);
 
-    List<Block> getCollidingBlocks(final AxisAlignedBB bb);
-
     Block getBlockAt(final BlockPos blockPos);
 
     default Block getBlockAt(final int x, final int y, final int z) {

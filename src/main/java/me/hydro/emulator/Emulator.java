@@ -18,6 +18,8 @@ import java.util.List;
 @Data
 public class Emulator {
 
+    private Motion motion = new Motion(0D, 0D, 0D, 0F, 0F);
+
     private final DataSupplier dataSupplier;
 
     private final JumpHandler jumpHandler = new JumpHandler();
@@ -26,7 +28,7 @@ public class Emulator {
     private final MoveEntityWithHeadingHandler moveEntityWithHeadingHandler = new MoveEntityWithHeadingHandler();
 
     public IterationResult runIteration(final IterationInput input) {
-        final Motion motion = input.getPreviousMotion().clone();
+        final Motion motion = this.motion.clone();
         final List<String> tags = new ArrayList<>();
 
         float forward = input.getForward();
@@ -82,7 +84,17 @@ public class Emulator {
 
         iteration = moveEntityWithHeadingHandler.handle(iteration);
 
-        return new IterationResult(iteration.getOffset(), iteration.getPredicted(), iteration.getMotion(),
+        return new IterationResult(iteration.getOffset(), iteration, iteration.getPredicted(), iteration.getMotion(),
                 iteration.getTags());
+    }
+
+    public void confirm(final IterationHolder iteration) {
+        this.motion = iteration.getMotion();
+
+        runPostActions(iteration);
+    }
+
+    public void runPostActions(final IterationHolder iteration) {
+        iteration.getPostEmulation().forEach(post -> post.accept(this));
     }
 }
