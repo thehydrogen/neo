@@ -2,7 +2,6 @@ package me.hydro.emulator.object.input;
 
 import lombok.Builder;
 import lombok.Data;
-import me.hydro.emulator.object.iteration.Motion;
 import me.hydro.emulator.util.Vector;
 import me.hydro.emulator.util.mcp.AxisAlignedBB;
 
@@ -13,8 +12,6 @@ public class IterationInput implements Cloneable {
     private final boolean ground, jumping, sprinting, usingItem, hitSlowdown, sneaking;
     private final int forward, strafing;
     private final float yaw;
-
-    private final Motion previousMotion;
 
     private final AxisAlignedBB lastReportedBoundingBox;
     private final Vector velocity;
@@ -35,7 +32,6 @@ public class IterationInput implements Cloneable {
                 .lastReportedBoundingBox(lastReportedBoundingBox)
                 .velocity(velocity)
                 .to(to)
-                .previousMotion(previousMotion)
                 .build();
     }
 }

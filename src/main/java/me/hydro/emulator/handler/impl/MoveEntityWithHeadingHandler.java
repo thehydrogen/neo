@@ -53,12 +53,16 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
         // Run Entity#moveEntity
         iteration = iteration.getEmulator().getMoveEntityHandler().handle(iteration);
 
-        // gravity and friction shiz
-        iteration.getMotion().subtractY(0.08D);
+        iteration.addPostAction(emulator -> {
+            if (emulator.getMotion() == null) return;
 
-        iteration.getMotion().multiplyY(MojangCocaine.GRAVITY);
-        iteration.getMotion().multiplyX(friction);
-        iteration.getMotion().multiplyZ(friction);
+            // gravity and friction shiz
+            emulator.getMotion().subtractY(0.08D);
+
+            emulator.getMotion().multiplyY(MojangCocaine.GRAVITY);
+            emulator.getMotion().multiplyX(friction);
+            emulator.getMotion().multiplyZ(friction);
+        });
 
         return iteration;
     }

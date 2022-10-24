@@ -1,5 +1,6 @@
 package me.hydro.emulator.handler.impl;
 
+import me.hydro.emulator.Emulator;
 import me.hydro.emulator.collision.Block;
 import me.hydro.emulator.collision.CollisionBlockState;
 import me.hydro.emulator.collision.CollisionLandable;
@@ -210,70 +211,83 @@ public class MoveEntityHandler implements MovementHandler {
         iteration.setPredicted(predicted);
         iteration.setOffset(offset);
 
-        final boolean collidedVertically = d4 != y;
-        final boolean collidedGround = collidedVertically && d4 < 0.0D;
+        final double x1 = d3;
+        final double x2 = x;
 
-        final int collisionX = MathHelper.floor_double(iteration.getPredicted().getX());
-        final int collisionY = MathHelper.floor_double(iteration.getPredicted().getY() - 0.20000000298023224D);
-        final int collisionZ = MathHelper.floor_double(iteration.getPredicted().getZ());
+        final double y1 = d4;
+        final double y2 = y;
 
-        BlockPos blockPos = new BlockPos(collisionX, collisionY, collisionZ);
-        Block block = iteration.getDataSupplier().getBlockAt(blockPos);
+        final double z1 = d5;
+        final double z2 = z;
 
-        if (block != null) {
-            /* fences need to be implemented here. good luck have fun :) */
+        final AxisAlignedBB finalBounding = entityBB;
 
-            final Block finalBlock = iteration.getDataSupplier().getBlockAt(
-                    blockPos.getX(),
-                    blockPos.getY(),
-                    blockPos.getZ()
-            );
+        iteration.addPostAction(emulator -> {
+            final boolean collidedVertically = y1 != y2;
+            final boolean collidedGround = collidedVertically && y1 < 0.0D;
 
-            if (d4 != y && finalBlock instanceof CollisionLandable) {
-                ((CollisionLandable)finalBlock).onLand(iteration);
-            }
+            final int collisionX = MathHelper.floor_double(iteration.getPredicted().getX());
+            final int collisionY = MathHelper.floor_double(iteration.getPredicted().getY() - 0.20000000298023224D);
+            final int collisionZ = MathHelper.floor_double(iteration.getPredicted().getZ());
 
-            if (collidedGround && !iteration.getInput().isSneaking() && finalBlock instanceof VerticalCollisionBlock) {
-                final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) finalBlock;
+            BlockPos blockPos = new BlockPos(collisionX, collisionY, collisionZ);
+            Block block = iteration.getDataSupplier().getBlockAt(blockPos);
 
-                leFunnyBlock.transform(iteration);
-            }
-        } else {
-            if (d4 != y){
-                iteration.getMotion().setMotionX(0);
-            }
-        }
+            if (block != null) {
+                /* fences need to be implemented here. good luck have fun :) */
 
-        if (d3 != x) {
-            iteration.getMotion().setMotionX(0.0D);
-        }
+                final Block finalBlock = iteration.getDataSupplier().getBlockAt(
+                        blockPos.getX(),
+                        blockPos.getY(),
+                        blockPos.getZ()
+                );
 
-        if (d5 != z) {
-            iteration.getMotion().setMotionZ(0.0D);
-        }
+                if (y1 != y2 && finalBlock instanceof CollisionLandable) {
+                    ((CollisionLandable)finalBlock).onLand(emulator);
+                }
 
-        // #doBlockCollisions
-        final BlockPos minPos = new BlockPos(entityBB.minX + 0.001D, entityBB.minY + 0.001D, entityBB.minZ + 0.001D);
-        final BlockPos maxPos = new BlockPos(entityBB.maxX - 0.001D, entityBB.maxY - 0.001D, entityBB.maxZ - 0.001D);
+                if (collidedGround && !iteration.getInput().isSneaking() && finalBlock instanceof VerticalCollisionBlock) {
+                    final VerticalCollisionBlock leFunnyBlock = (VerticalCollisionBlock) finalBlock;
 
-        for (int i = minPos.getX(); i <= maxPos.getX(); ++i) {
-            for (int j = minPos.getY(); j <= maxPos.getY(); ++j) {
-                for (int k = minPos.getZ(); k <= maxPos.getZ(); ++k) {
-                    final Block collisionBlock = iteration.getDataSupplier().getBlockAt(i, j, k);
-
-                    final boolean isCollideState = collisionBlock instanceof CollisionBlockState;
-
-                    if (!isCollideState) continue;
-
-                    final CollisionBlockState blockState = (CollisionBlockState) collisionBlock;
-                    blockState.transform(iteration);
+                    leFunnyBlock.transform(emulator);
+                }
+            } else {
+                if (y1 != y2) {
+                    emulator.getMotion().setMotionX(0);
                 }
             }
-        }
 
-        if (d3 != x) iteration.getMotion().setMotionX(0.0D);
-        if (d5 != z) iteration.getMotion().setMotionZ(0.0D);
-        if (d4 != y) iteration.getMotion().setMotionY(0.0D);
+            if (x1 != x2) {
+                emulator.getMotion().setMotionX(0.0D);
+            }
+
+            if (z1 != z2) {
+                emulator.getMotion().setMotionZ(0.0D);
+            }
+
+            // #doBlockCollisions
+            final BlockPos minPos = new BlockPos(finalBounding.minX + 0.001D, finalBounding.minY + 0.001D, finalBounding.minZ + 0.001D);
+            final BlockPos maxPos = new BlockPos(finalBounding.maxX - 0.001D, finalBounding.maxY - 0.001D, finalBounding.maxZ - 0.001D);
+
+            for (int i = minPos.getX(); i <= maxPos.getX(); ++i) {
+                for (int j = minPos.getY(); j <= maxPos.getY(); ++j) {
+                    for (int k = minPos.getZ(); k <= maxPos.getZ(); ++k) {
+                        final Block collisionBlock = iteration.getDataSupplier().getBlockAt(i, j, k);
+
+                        final boolean isCollideState = collisionBlock instanceof CollisionBlockState;
+
+                        if (!isCollideState) continue;
+
+                        final CollisionBlockState blockState = (CollisionBlockState) collisionBlock;
+                        blockState.transform(emulator);
+                    }
+                }
+            }
+
+            if (x1 != x2) emulator.getMotion().setMotionX(0.0D);
+            if (z1 != z2) emulator.getMotion().setMotionZ(0.0D);
+            if (y1 != y2) emulator.getMotion().setMotionY(0.0D);
+        });
 
         return iteration;
     }
