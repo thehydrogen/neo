@@ -6,7 +6,7 @@
 
     <groupId>me.hydro</groupId>
     <artifactId>emulator</artifactId>
-    <version>1.0-neo</version>
+    <version>1.1-neo</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
