@@ -253,7 +253,7 @@ public class MoveEntityHandler implements MovementHandler {
                 }
             } else {
                 if (y1 != y2) {
-                    emulator.getMotion().setMotionX(0);
+                    emulator.getMotion().setMotionY(0);
                 }
             }
 
