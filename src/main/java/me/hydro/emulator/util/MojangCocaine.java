@@ -13,5 +13,7 @@ public interface MojangCocaine {
 
     double SPRINT_MULTIPLIER = 0.3D; // This has been truncated, find the real value :)
     double GRAVITY = 0.9800000190734863D;
-    double RESET = 0.05D;
+
+    // This value is different on modern versions and replaced with 0.003.
+    double RESET = 0.005D;
 }
