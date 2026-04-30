@@ -1,12 +1,8 @@
 package me.hydro.emulator.util.mcp;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Maps;
+import me.hydro.emulator.util.GuavaPredicate;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public enum EnumFacing {
     DOWN("DOWN", 0, 0, 1, -1, "down", AxisDirection.NEGATIVE, Axis.Y, new Vec3i(0, -1, 0)),
@@ -48,7 +44,7 @@ public enum EnumFacing {
      * All Facings with horizontal axis in order S-W-N-E
      */
     private static final EnumFacing[] HORIZONTALS = new EnumFacing[4];
-    private static final Map NAME_LOOKUP = Maps.newHashMap();
+    private static final Map<String, EnumFacing> NAME_LOOKUP = new HashMap<>();
     // private static final String __OBFID = "CL_00001201";
 
     private static final EnumFacing[] $VALUES = new EnumFacing[]{DOWN, UP, NORTH, SOUTH, WEST, EAST};
@@ -328,11 +324,11 @@ public enum EnumFacing {
         }
     }
 
-    public static enum Axis implements Predicate {
+    public static enum Axis implements GuavaPredicate<Object> {
         X("X", 0, "X", 0, "x", Plane.HORIZONTAL),
         Y("Y", 1, "Y", 1, "y", Plane.VERTICAL),
         Z("Z", 2, "Z", 2, "z", Plane.HORIZONTAL);
-        private static final Map NAME_LOOKUP = Maps.newHashMap();
+        private static final Map<String, Axis> NAME_LOOKUP = new HashMap<>();
         private final String name;
         private final Plane plane;
         private static final Axis[] $VALUES = new Axis[]{X, Y, Z};
@@ -415,7 +411,7 @@ public enum EnumFacing {
         }
     }
 
-    public static enum Plane implements Predicate, Iterable {
+    public static enum Plane implements GuavaPredicate<Object>, Iterable<EnumFacing> {
         HORIZONTAL("HORIZONTAL", 0, "HORIZONTAL", 0),
         VERTICAL("VERTICAL", 1, "VERTICAL", 1);
         private static final Plane[] $VALUES = new Plane[]{HORIZONTAL, VERTICAL};
@@ -445,8 +441,8 @@ public enum EnumFacing {
             return facing != null && facing.getAxis().getPlane() == this;
         }
 
-        public Iterator iterator() {
-            return Iterators.forArray(this.facings());
+        public Iterator<EnumFacing> iterator() {
+            return Arrays.asList(this.facings()).iterator();
         }
 
         public boolean apply(Object p_apply_1_) {
