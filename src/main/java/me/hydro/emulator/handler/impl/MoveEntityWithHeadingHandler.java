@@ -3,7 +3,7 @@ package me.hydro.emulator.handler.impl;
 import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
-import me.hydro.emulator.util.MojangCocaine;
+import me.hydro.emulator.util.Notchian;
 
 public class MoveEntityWithHeadingHandler implements MovementHandler {
 
@@ -26,7 +26,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             //
             // EntityLivingBase#moveEntityWithHeading
             final double aiMoveSpeed = getAiMoveSpeed(input.isSprinting());
-            final float drag = MojangCocaine.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
+            final float drag = Notchian.LAND_MOVEMENT_FACTOR_LEGACY / (friction * friction * friction);
 
             // Set moveSpeed to aiMoveSpeed * drag
             moveSpeed = (float) (aiMoveSpeed * drag);
@@ -36,8 +36,8 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             // Set moveSpeed depending on sprint status
             // This isn't completely accurate :)
             moveSpeed = input.isSprinting()
-                    ? (float) (MojangCocaine.SPEED_AIR + (MojangCocaine.SPEED_AIR * 0.3D))
-                    : MojangCocaine.SPEED_AIR;
+                    ? (float) (Notchian.SPEED_AIR + (Notchian.SPEED_AIR * 0.3D))
+                    : Notchian.SPEED_AIR;
         }
 
         // Set friction to moveSpeed temporarily
@@ -57,9 +57,9 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
             if (emulator.getMotion() == null) return;
 
             // gravity and friction shiz
-            emulator.getMotion().subtractY(0.08D);
+            emulator.getMotion().subtractY(Notchian.GRAVITY);
 
-            emulator.getMotion().multiplyY(MojangCocaine.GRAVITY);
+            emulator.getMotion().multiplyY(Notchian.DRAG);
             emulator.getMotion().multiplyX(friction);
             emulator.getMotion().multiplyZ(friction);
         });
@@ -70,7 +70,7 @@ public class MoveEntityWithHeadingHandler implements MovementHandler {
     private double getAiMoveSpeed(final boolean sprinting) {
         double aiMoveSpeed = 0.1F;
 
-        if (sprinting) aiMoveSpeed += aiMoveSpeed * MojangCocaine.SPRINT_MULTIPLIER;
+        if (sprinting) aiMoveSpeed += aiMoveSpeed * Notchian.SPRINT_MULTIPLIER;
 
         // Speed & slowness potions aren't handled
         // You'll need to figure that out yourself :)

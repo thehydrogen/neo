@@ -4,7 +4,7 @@ import me.hydro.emulator.handler.MovementHandler;
 import me.hydro.emulator.object.input.IterationInput;
 import me.hydro.emulator.object.iteration.IterationHolder;
 import me.hydro.emulator.object.iteration.Motion;
-import me.hydro.emulator.util.MojangCocaine;
+import me.hydro.emulator.util.Notchian;
 import me.hydro.emulator.util.mcp.MathHelper;
 
 public class JumpHandler implements MovementHandler {
@@ -20,7 +20,7 @@ public class JumpHandler implements MovementHandler {
         final Motion motion = holder.getMotion();
 
         // Set motion Y to 0.42F (and add our corresponding tag)
-        motion.setMotionY(MojangCocaine.UPWARDS_MOTION);
+        motion.setMotionY(Notchian.UPWARDS_MOTION);
         holder.getTags().add("jump");
 
         // Look at the client code to see how potion effects are handled :)
